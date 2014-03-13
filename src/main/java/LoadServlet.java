@@ -79,18 +79,31 @@ public class LoadServlet extends HttpServlet {
                 +"new" +fileName));
           in = filePart.getInputStream();
           
-          int read =0;
-          final byte[] bytes = new byte[1024];
-
-            while ((read = in.read(bytes)) != -1) {
-            out.write(bytes, 0, read);
-          }
           Node root = jcrSession.getRootNode();
           Node node = root.getNode("Message");
           node.setProperty("message", message);//
           Property nodeProp = node.getProperty("message");
           fromRepo =nodeProp.getString();
+          String title = "Uploading to JackRabbit Repo";
+          String docType =
+            "<!doctype html public \"-//w3c//dtd html 4.0 " +
+            "transitional//en\">\n";
+            printer.println(docType +
+                "<html>\n" +
+                "<head><title>" + title + "</title></head>\n" +
+                "<body bgcolor=\"#f0f0f0\">\n" +
+                "<h1 align=\"center\">" + title + "</h1>\n" +
+                "<ul>\n" +
+                " <li><b>Message</b>: "
+                + request.getParameter("msg") + "\n" +
+                " <li><b>Message from the repo</b>:" + fromRepo
+                + "</li></ul>\n" +
+                "</body></html>");
+          printer.close();
           
+          Node imgNode;
+            imgNode = root.getNode("Images");
+          imgNode.setProperty(fileName, in);
           jcrSession.save();
          
       }finally{
@@ -106,22 +119,7 @@ public class LoadServlet extends HttpServlet {
         }
       }
       
-        String title = "Uploading to JackRabbit Repo";
-        String docType =
-         "<!doctype html public \"-//w3c//dtd html 4.0 " +
-        "transitional//en\">\n";
-        printer.println(docType +
-                "<html>\n" +
-                "<head><title>" + title + "</title></head>\n" +
-                "<body bgcolor=\"#f0f0f0\">\n" +
-                "<h1 align=\"center\">" + title + "</h1>\n" +
-                "<ul>\n" +
-                " <li><b>Message</b>: "
-                + request.getParameter("msg") + "\n" +
-                " <li><b>Message from the repo</b>:" + fromRepo
-                + "</li></ul>\n" +
-                "</body></html>");
-      printer.close();
+        
     }
     private String getFileName(final Part part) {
     final String partHeader = part.getHeader("content-disposition");
