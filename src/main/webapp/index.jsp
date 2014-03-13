@@ -10,10 +10,10 @@
         <h1>Hello World!</h1>
         <h3>File loader:</h3>
         write a message: <br />
-        <form action="LoadServlet" method="POST">
+        <form action="LoadServlet" method="POST" enctype="multipart/form-data">
             Message Name: <input type="text" name="msg">
-            File : <input type="file" name="img">
-                          <input type="submit" value="Submit" />
+            File : <input type="file" name="file">
+                   <input type="submit" value="Submit" />
         </form>
     </body>
 </html>

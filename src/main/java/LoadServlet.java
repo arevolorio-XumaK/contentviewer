@@ -31,11 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.jcr.*;
 import javax.naming.NamingException;
 import javax.jcr.Repository;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Part;
 import org.apache.jackrabbit.commons.JcrUtils;
-
+@WebServlet(name = "FileUploadServlet", urlPatterns = {"/upload"})
+@MultipartConfig
 public class LoadServlet extends HttpServlet {
-
+        private final static Logger LOGGER = 
+            Logger.getLogger(LoadServlet.class.getCanonicalName());
     /**
 * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
 * methods.
@@ -49,39 +53,64 @@ public class LoadServlet extends HttpServlet {
 */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, RepositoryException, NamingException {
-        
+        response.setContentType("text/html");
+        //JackRabbit Log in 
         Repository repository;
         repository = JcrUtils.getRepository("http://localhost:8080/rmi");
         SimpleCredentials creds = new SimpleCredentials("admin",
             "admin".toCharArray());
         Session jcrSession = repository.login(creds, "default");
         System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
+        //messages a desplegar
         String message = request.getParameter("msg");
         String fromRepo = "CDP";
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        InputStream is = null;
-        OutputStream os = null;
-        Part filePart = request.getPart("img");
-        //String fileName = getFileName(filePart);
+        //
+         // Create path components to save the file
+          final String path = "/home/xumakgt6/";
+          final Part filePart = request.getPart("file");
+          final String fileName = getFileName(filePart);
+        //
+        PrintWriter printer = response.getWriter();
+        InputStream in = null;
+        OutputStream out = null;
+        //
       try{
+          out = new FileOutputStream(new File(path + File.separator
+                +"new" +fileName));
+          in = filePart.getInputStream();
+          
+          int read =0;
+          final byte[] bytes = new byte[1024];
+
+            while ((read = in.read(bytes)) != -1) {
+            out.write(bytes, 0, read);
+          }
           Node root = jcrSession.getRootNode();
           Node node = root.getNode("Message");
           node.setProperty("message", message);//
           Property nodeProp = node.getProperty("message");
           fromRepo =nodeProp.getString();
-          jcrSession.save();
           
+          jcrSession.save();
+         
       }finally{
           jcrSession.logout();
-          
+          if (out != null) {
+            out.close();
+        }
+        if (in != null) {
+            in.close();
+        }
+        if (printer != null) {
+            printer.close();
+        }
       }
       
-String title = "Uploading to JackRabbit Repo";
-      String docType =
-      "<!doctype html public \"-//w3c//dtd html 4.0 " +
-      "transitional//en\">\n";
-      out.println(docType +
+        String title = "Uploading to JackRabbit Repo";
+        String docType =
+         "<!doctype html public \"-//w3c//dtd html 4.0 " +
+        "transitional//en\">\n";
+        printer.println(docType +
                 "<html>\n" +
                 "<head><title>" + title + "</title></head>\n" +
                 "<body bgcolor=\"#f0f0f0\">\n" +
@@ -92,8 +121,19 @@ String title = "Uploading to JackRabbit Repo";
                 " <li><b>Message from the repo</b>:" + fromRepo
                 + "</li></ul>\n" +
                 "</body></html>");
-      out.close();
+      printer.close();
     }
+    private String getFileName(final Part part) {
+    final String partHeader = part.getHeader("content-disposition");
+    LOGGER.log(Level.INFO, "Part Header = {0}", partHeader);
+    for (String content : part.getHeader("content-disposition").split(";")) {
+        if (content.trim().startsWith("filename")) {
+            return content.substring(
+                    content.indexOf('=') + 1).trim().replace("\"", "");
+        }
+    }
+    return null;
+}
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
