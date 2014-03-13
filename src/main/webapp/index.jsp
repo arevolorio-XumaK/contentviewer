@@ -7,7 +7,7 @@
         <title>Load Image</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>ContentViewer!</h1>
         <h3>File loader:</h3>
         write a message: <br />
         <form action="LoadServlet" method="POST" enctype="multipart/form-data">

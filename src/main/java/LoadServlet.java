@@ -124,14 +124,41 @@ public class LoadServlet extends HttpServlet {
     private String getFileName(final Part part) {
     final String partHeader = part.getHeader("content-disposition");
     LOGGER.log(Level.INFO, "Part Header = {0}", partHeader);
-    for (String content : part.getHeader("content-disposition").split(";")) {
-        if (content.trim().startsWith("filename")) {
-            return content.substring(
+         for (String content : part.getHeader("content-disposition").split(";")) {
+              if (content.trim().startsWith("filename")) {
+                 return content.substring(
                     content.indexOf('=') + 1).trim().replace("\"", "");
+              }
         }
+        return null;
     }
-    return null;
-}
+    public void addFileToRepo(Session jcrSession, InputStream in)// este metodo agrega archivos al repositorio dependiendo de que tipo de archivo sea 
+    {
+        
+    }
+    public void addMessageToRepo(Session jcrSession, String msg) throws RepositoryException// este metodo agrega Messages(strings) al repositorio de jackrabbit
+    {
+        Node root = jcrSession.getRootNode();
+        Node node = root.getNode("Message");
+        node.setProperty(msg, msg);
+        jcrSession.save();
+        
+    }
+    public String getMessageFromRepo(Session jcrSession)// este metodo obtiene un String del nodo message del repositorio de jackrabbit 
+    {
+        return "";
+    }
+    public String getFileType(String file){
+        String tipo = null;
+        String ext; 
+        if((file.contains(".jpg"))||file.contains(".png")||file.contains(".bmp")||file.contains(".gif"))
+        {
+            tipo = "Images"; 
+        }else{
+            tipo = "Docs";
+        }
+        return tipo;
+    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
