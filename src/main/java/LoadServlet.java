@@ -82,7 +82,7 @@ public class LoadServlet extends HttpServlet {
           
           Node root = jcrSession.getRootNode();
           //addMessageToRepo(jcrSession, message);
-          //addFileToRepo(jcrSession,in,request);
+          addFileToRepo(jcrSession,in,request);
           jcrSession.save();
           Node node = root.getNode("Message");
           PropertyIterator piterator =node.getProperties();
