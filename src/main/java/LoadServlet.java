@@ -105,7 +105,10 @@ public class LoadServlet extends HttpServlet {
                 {
                   Property tmp = piterator.nextProperty();
                   fromRepo = tmp.getString();
-                  printer.println("<li>"+fromRepo+"</li>");
+                  if(!(fromRepo.equals("nt:unstructured")))
+                  {    
+                      printer.println("<li>"+fromRepo+"</li>");
+                  }
                 }
                  /*request.getParameter("msg") + "\n" +
                 " <li><b>Message from the repo</b>:" + fromRepo*/
@@ -116,7 +119,10 @@ public class LoadServlet extends HttpServlet {
                 {
                   Property tmp = img_iterator.nextProperty();
                   String filename = tmp.getName();
-                  printer.println("<li>"+filename+"</li>");
+                  if(!(filename.equals("jcr:primaryType")))
+                  {    
+                      printer.println("<li>"+filename+"</li>");
+                  }
                 }
                  /*request.getParameter("msg") + "\n" +
                 " <li><b>Message from the repo</b>:" + fromRepo*/
@@ -127,7 +133,10 @@ public class LoadServlet extends HttpServlet {
                 {
                   Property tmp = docs_iterator.nextProperty();
                   String filename = tmp.getName();
-                  printer.println("<li>"+filename+"</li>");
+                  if(!(filename.equals("jcr:primaryType")))
+                  {    
+                      printer.println("<li>"+filename+"</li>");
+                  }
                 }
                  /*request.getParameter("msg") + "\n" +
                 " <li><b>Message from the repo</b>:" + fromRepo*/
