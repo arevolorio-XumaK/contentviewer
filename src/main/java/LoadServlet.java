@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -80,10 +81,13 @@ public class LoadServlet extends HttpServlet {
           in = filePart.getInputStream();
           
           Node root = jcrSession.getRootNode();
+          addMessageToRepo(jcrSession, message);
+          jcrSession.save();
           Node node = root.getNode("Message");
-          node.setProperty("message", message);//
-          Property nodeProp = node.getProperty("message");
-          fromRepo =nodeProp.getString();
+          PropertyIterator piterator =node.getProperties();
+          
+          //Property nodeProp = node.getProperty("message");
+         // fromRepo =nodeProp.getString();
           String title = "Uploading to JackRabbit Repo";
           String docType =
             "<!doctype html public \"-//w3c//dtd html 4.0 " +
@@ -94,10 +98,16 @@ public class LoadServlet extends HttpServlet {
                 "<body bgcolor=\"#f0f0f0\">\n" +
                 "<h1 align=\"center\">" + title + "</h1>\n" +
                 "<ul>\n" +
-                " <li><b>Message</b>: "
-                + request.getParameter("msg") + "\n" +
-                " <li><b>Message from the repo</b>:" + fromRepo
-                + "</li></ul>\n" +
+                " <li><b>thoose are the messages saved on jack Rabbit Repository</b>:</li> ");
+                while(piterator.hasNext())
+                {
+                  Property tmp = piterator.nextProperty();
+                  fromRepo = tmp.getString();
+                  printer.println("<li>"+fromRepo+"</li>");
+                }
+                 /*request.getParameter("msg") + "\n" +
+                " <li><b>Message from the repo</b>:" + fromRepo*/
+               printer.println("</ul>\n" +
                 "</body></html>");
           printer.close();
           
@@ -144,9 +154,19 @@ public class LoadServlet extends HttpServlet {
         jcrSession.save();
         
     }
-    public String getMessageFromRepo(Session jcrSession)// este metodo obtiene un String del nodo message del repositorio de jackrabbit 
+    public LinkedList<Node> getMessagesFromRepo(Session jcrSession) throws RepositoryException// este metodo obtienen una lista de nodos del nodo message del repositorio de jackrabbit 
     {
-        return "";
+        LinkedList<Node> msg = new LinkedList<Node>();
+        Node root = jcrSession.getRootNode();
+        Node Messages = root.getNode("Message");
+        NodeIterator ni = Messages.getNodes();
+        while(ni.hasNext())
+        {
+            Node next = ni.nextNode();
+            msg.add(next);
+        }
+        
+        return msg;
     }
     public String getFileType(String file){
         String tipo = null;
