@@ -81,13 +81,15 @@ public class LoadServlet extends HttpServlet {
           in = filePart.getInputStream();
           
           Node root = jcrSession.getRootNode();
-          addMessageToRepo(jcrSession, message);
+          //addMessageToRepo(jcrSession, message);
+          //addFileToRepo(jcrSession,in,request);
           jcrSession.save();
           Node node = root.getNode("Message");
           PropertyIterator piterator =node.getProperties();
-          
-          //Property nodeProp = node.getProperty("message");
-         // fromRepo =nodeProp.getString();
+          Node imageNode = root.getNode("Images");
+          PropertyIterator img_iterator =imageNode.getProperties();
+          Node DocsNode = root.getNode("Docs");
+          PropertyIterator docs_iterator =DocsNode.getProperties();
           String title = "Uploading to JackRabbit Repo";
           String docType =
             "<!doctype html public \"-//w3c//dtd html 4.0 " +
@@ -98,7 +100,7 @@ public class LoadServlet extends HttpServlet {
                 "<body bgcolor=\"#f0f0f0\">\n" +
                 "<h1 align=\"center\">" + title + "</h1>\n" +
                 "<ul>\n" +
-                " <li><b>thoose are the messages saved on jack Rabbit Repository</b>:</li> ");
+                " <li><b>thoose are the strings saved on jack Rabbit Repository</b>:</li> ");
                 while(piterator.hasNext())
                 {
                   Property tmp = piterator.nextProperty();
@@ -108,13 +110,35 @@ public class LoadServlet extends HttpServlet {
                  /*request.getParameter("msg") + "\n" +
                 " <li><b>Message from the repo</b>:" + fromRepo*/
                printer.println("</ul>\n" +
+                "<ul>\n" +
+                " <li><b>thoose are the images saved on jack Rabbit Repository</b>:</li> ");
+                while(img_iterator.hasNext())
+                {
+                  Property tmp = img_iterator.nextProperty();
+                  String filename = tmp.getName();
+                  printer.println("<li>"+filename+"</li>");
+                }
+                 /*request.getParameter("msg") + "\n" +
+                " <li><b>Message from the repo</b>:" + fromRepo*/
+               printer.println("</ul>\n"+
+                "<ul>\n" +
+                " <li><b>thoose are the Documents saved on jack Rabbit Repository</b>:</li> ");
+                while(docs_iterator.hasNext())
+                {
+                  Property tmp = docs_iterator.nextProperty();
+                  String filename = tmp.getName();
+                  printer.println("<li>"+filename+"</li>");
+                }
+                 /*request.getParameter("msg") + "\n" +
+                " <li><b>Message from the repo</b>:" + fromRepo*/
+                printer.println("</ul>\n"+
                 "</body></html>");
-          printer.close();
+               
           
-          Node imgNode;
-            imgNode = root.getNode("Images");
+          /*Node imgNode;
+          imgNode = root.getNode("Images");
           imgNode.setProperty(fileName, in);
-          jcrSession.save();
+          jcrSession.save();*/
          
       }finally{
           jcrSession.logout();
@@ -142,9 +166,29 @@ public class LoadServlet extends HttpServlet {
         }
         return null;
     }
-    public void addFileToRepo(Session jcrSession, InputStream in)// este metodo agrega archivos al repositorio dependiendo de que tipo de archivo sea 
+    public void addFileToRepo(Session jcrSession, InputStream in, HttpServletRequest request) throws RepositoryException, IOException, ServletException// este metodo agrega archivos al repositorio dependiendo de que tipo de archivo sea 
     {
-        
+          Node root = jcrSession.getRootNode();
+          Part filePart = request.getPart("file");
+          final String fileName = getFileName(filePart);
+          int point = fileName.lastIndexOf(".");
+          String ext = fileName.substring(point, fileName.length());
+          Node fileNode = null;
+          if((ext.equals(".jpg"))||(ext.equals(".png"))||(ext.equals(".gif"))||(ext.equals(".jpeg")))
+          {
+              fileNode = root.getNode("Images");
+              fileNode.setProperty(fileName, in);
+              jcrSession.save();
+          }else{
+              if((ext.equals(".doc"))||(ext.equals(".txt"))||(ext.equals(".pdf"))||(ext.equals(".docx"))||(ext.equals(".docx"))){
+                  fileNode = root.getNode("Docs");
+                  fileNode.setProperty(fileName, in);
+                  jcrSession.save();
+              }
+          }
+         //Node imgNode = root.getNode("Images");
+         System.out.println(">>>>name of the file: "+fileName+" and the extension is "+ext);
+         
     }
     public void addMessageToRepo(Session jcrSession, String msg) throws RepositoryException// este metodo agrega Messages(strings) al repositorio de jackrabbit
     {
@@ -168,17 +212,7 @@ public class LoadServlet extends HttpServlet {
         
         return msg;
     }
-    public String getFileType(String file){
-        String tipo = null;
-        String ext; 
-        if((file.contains(".jpg"))||file.contains(".png")||file.contains(".bmp")||file.contains(".gif"))
-        {
-            tipo = "Images"; 
-        }else{
-            tipo = "Docs";
-        }
-        return tipo;
-    }
+   
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
