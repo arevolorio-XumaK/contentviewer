@@ -67,7 +67,7 @@ public class LoadServlet extends HttpServlet {
         String fromRepo = "CDP";
         //
          // Create path components to save the file
-          final String path = "/home/xumakgt6/";
+          final String path = "/home/xumakgt6/jackrabbit-2.6.5/jackrabbit-standalone/target/jackrabbit/images";
           final Part filePart = request.getPart("file");
           final String fileName = getFileName(filePart);
         //
@@ -76,8 +76,7 @@ public class LoadServlet extends HttpServlet {
         OutputStream out = null;
         //
       try{
-          out = new FileOutputStream(new File(path + File.separator
-                +"new" +fileName));
+          
           in = filePart.getInputStream();
           
           Node root = jcrSession.getRootNode();
@@ -119,9 +118,15 @@ public class LoadServlet extends HttpServlet {
                 {
                   Property tmp = img_iterator.nextProperty();
                   String filename = tmp.getName();
+                  String pathJR;
+                  pathJR = tmp.getPath();
+                  InputStream imagen = tmp.getStream();
+                  String spath = path+"/new"+filename;
+                  System.out.println("*******************"+pathJR+"****************"+spath);
                   if(!(filename.equals("jcr:primaryType")))
                   {    
                       printer.println("<li>"+filename+"</li>");
+                       
                   }
                 }
                  /*request.getParameter("msg") + "\n" +
