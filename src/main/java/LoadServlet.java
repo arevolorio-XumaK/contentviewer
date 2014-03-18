@@ -80,8 +80,8 @@ public class LoadServlet extends HttpServlet {
           in = filePart.getInputStream();
           
           Node root = jcrSession.getRootNode();
-          //addMessageToRepo(jcrSession, message);
-          addFileToRepo(jcrSession,in,request);
+          //addMessageToRepo(jcrSession, message);//metodo que agrega el mensaje al nodo messages
+          //addFileToRepo(jcrSession,in,request);// metodo que agrega archivo al los distintos tipos nodos
           jcrSession.save();
           Node node = root.getNode("Message");
           PropertyIterator piterator =node.getProperties();
@@ -125,7 +125,7 @@ public class LoadServlet extends HttpServlet {
                   System.out.println("*******************"+pathJR+"****************"+spath);
                   if(!(filename.equals("jcr:primaryType")))
                   {    
-                      printer.println("<li>"+filename+"</li>");
+                      printer.println("<li><a href=\"display.jsp\" name=\"nombre\" value=\""+ filename +" \"> "+filename+"</a></li>");
                        
                   }
                 }

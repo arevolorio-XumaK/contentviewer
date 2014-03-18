@@ -13,5 +13,6 @@
     </head>
     <body>
         <h1>loud from Jack-Rabbit's Repository</h1>
+        <img src= "ImageLouderServlet" width = "600" height = "400"/>
     </body>
 </html>
