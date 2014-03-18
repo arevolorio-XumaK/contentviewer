@@ -125,7 +125,7 @@ public class LoadServlet extends HttpServlet {
                   System.out.println("*******************"+pathJR+"****************"+spath);
                   if(!(filename.equals("jcr:primaryType")))
                   {    
-                      printer.println("<li><a href=\"display.jsp\" name=\"nombre\" value=\""+ filename +" \"> "+filename+"</a></li>");
+                      printer.println("<li><a  href=\"ImageLouderServlet?id="+filename+"\" > "+filename+"</a></li>");
                        
                   }
                 }

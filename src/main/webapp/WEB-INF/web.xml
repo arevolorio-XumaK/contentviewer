@@ -8,6 +8,14 @@
         <servlet-name>LoadServlet</servlet-name>
         <url-pattern>/LoadServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ImageLoadServlet</servlet-name>
+        <servlet-class>ImageLoadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ImageLoadServlet</servlet-name>
+        <url-pattern>/ImageLoadServlet</url-pattern>
+    </servlet-mapping>
     <context-param>
     <description>Location to store uploaded file</description>
     <param-name>file-upload</param-name>

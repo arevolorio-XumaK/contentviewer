@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import com.liferay.portal.util.PortalUtil;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -55,10 +56,10 @@ public class ImageLouderServlet extends HttpServlet {
                 "admin".toCharArray());
                 Session jcrSession = repository.login(creds, "default");
                 System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
-                
+                String fileName = request.getParameter("id");
                 Node root = jcrSession.getRootNode();
                 Node Images = root.getNode("Images");
-                Property property = Images.getProperty("barca.jpeg");
+                Property property = Images.getProperty(fileName);
                 InputStream is = property.getStream();
                 int read =0;
                 while ((read=is.read())!=-1){

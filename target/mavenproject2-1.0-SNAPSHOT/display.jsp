@@ -13,6 +13,12 @@
     </head>
     <body>
         <h1>loud from Jack-Rabbit's Repository</h1>
+        <% String nombre = request.getParameter("id"); %>
+        <p>nombre de archivo:<%= nombre %></p>
+        <form action="ImageLouderServlet">
+            <input type="hidden" name="f" id="f" value="<%= nombre %>" >
+            <input type="submit" value="Submit" />
+        </form>
         <img src= "ImageLouderServlet" width = "600" height = "400"/>
     </body>
 </html>
