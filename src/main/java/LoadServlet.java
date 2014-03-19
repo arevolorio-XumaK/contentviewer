@@ -80,8 +80,14 @@ public class LoadServlet extends HttpServlet {
           in = filePart.getInputStream();
           
           Node root = jcrSession.getRootNode();
-          //addMessageToRepo(jcrSession, message);//metodo que agrega el mensaje al nodo messages
-          //addFileToRepo(jcrSession,in,request);// metodo que agrega archivo al los distintos tipos nodos
+          if(!(message.equals(null)))
+          {    
+            addMessageToRepo(jcrSession, message);//metodo que agrega el mensaje al nodo messages
+          }
+          if(!(in.equals(null)))
+          {    
+            addFileToRepo(jcrSession,in,request);// metodo que agrega archivo al los distintos tipos nodos
+          }
           jcrSession.save();
           Node node = root.getNode("Message");
           PropertyIterator piterator =node.getProperties();

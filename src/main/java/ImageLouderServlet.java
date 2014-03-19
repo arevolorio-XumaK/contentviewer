@@ -49,7 +49,11 @@ public class ImageLouderServlet extends HttpServlet {
         
         ServletOutputStream output = null;
         PrintWriter out = response.getWriter();
+        
+      if (!(request.getParameter("id").equals(null)))
+      {    
         try {
+                
                 Repository repository;
                 repository = JcrUtils.getRepository("http://localhost:8080/rmi");
                 SimpleCredentials creds = new SimpleCredentials("admin",
@@ -57,6 +61,7 @@ public class ImageLouderServlet extends HttpServlet {
                 Session jcrSession = repository.login(creds, "default");
                 System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
                 String fileName = request.getParameter("id");
+                System.out.println(fileName);
                 Node root = jcrSession.getRootNode();
                 Node Images = root.getNode("Images");
                 Property property = Images.getProperty(fileName);
@@ -78,6 +83,7 @@ public class ImageLouderServlet extends HttpServlet {
             out.close();
             
         }
+      }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -8,12 +8,12 @@
     </head>
     <body>
         <h1>ContentViewer!</h1>
-        <h3>File loader:</h3>
-        write a message: <br />
-        <form action="LoadServlet" method="POST" enctype="multipart/form-data">
-            Message Name: <input type="text" name="msg">
-            File : <input type="file" name="file">
-                   <input type="submit" value="Submit" />
-        </form>
+        <h3>Options</h3>
+        <table>
+            <tr>
+                <td><a href="Viewer">Viewer</a></td>
+                <td><a href="upload.jsp">Upload</a></td>
+            </tr>
+        </table>
     </body>
 </html>

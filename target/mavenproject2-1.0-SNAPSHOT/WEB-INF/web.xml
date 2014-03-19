@@ -4,6 +4,10 @@
         <servlet-name>LoadServlet</servlet-name>
         <servlet-class>LoadServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Viewer</servlet-name>
+        <servlet-class>Viewer</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoadServlet</servlet-name>
         <url-pattern>/LoadServlet</url-pattern>
@@ -17,12 +21,16 @@
         <url-pattern>/ImageLoadServlet</url-pattern>
     </servlet-mapping>
     <context-param>
-    <description>Location to store uploaded file</description>
-    <param-name>file-upload</param-name>
-    <param-value>
+        <description>Location to store uploaded file</description>
+        <param-name>file-upload</param-name>
+        <param-value>
          home/xumakgt6/apache-tomcat-7.0.41/webapps
      </param-value>
     </context-param>
+    <servlet-mapping>
+        <servlet-name>Viewer</servlet-name>
+        <url-pattern>/Viewer</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
