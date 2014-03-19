@@ -7,13 +7,14 @@
         <title>Load Image</title>
     </head>
     <body>
-        <h1>ContentViewer!</h1>
-        <h3>Options</h3>
+        <center><h1>ContentViewer!</h1>
+        
         <table>
             <tr>
                 <td><a href="Viewer">Viewer</a></td>
                 <td><a href="upload.jsp">Upload</a></td>
             </tr>
         </table>
+       </center>
     </body>
 </html>

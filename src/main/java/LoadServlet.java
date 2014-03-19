@@ -63,7 +63,7 @@ public class LoadServlet extends HttpServlet {
         Session jcrSession = repository.login(creds, "default");
         System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
         //messages a desplegar
-        String message = request.getParameter("msg");
+       
         String fromRepo = "CDP";
         //
          // Create path components to save the file
@@ -74,20 +74,16 @@ public class LoadServlet extends HttpServlet {
         PrintWriter printer = response.getWriter();
         InputStream in = null;
         OutputStream out = null;
+        //verificacion de paramentros de entrada
+      
+          
+            
         //
       try{
           
           in = filePart.getInputStream();
-          
-          Node root = jcrSession.getRootNode();
-          if(!(message.equals(null)))
-          {    
-            addMessageToRepo(jcrSession, message);//metodo que agrega el mensaje al nodo messages
-          }
-          if(!(in.equals(null)))
-          {    
-            addFileToRepo(jcrSession,in,request);// metodo que agrega archivo al los distintos tipos nodos
-          }
+          Node root = jcrSession.getRootNode();    
+          addFileToRepo(jcrSession,in,request);// metodo que agrega archivo al los distintos tipos nodo
           jcrSession.save();
           Node node = root.getNode("Message");
           PropertyIterator piterator =node.getProperties();
@@ -173,7 +169,7 @@ public class LoadServlet extends HttpServlet {
         }
       }
       
-        
+      
     }
     private String getFileName(final Part part) {
     final String partHeader = part.getHeader("content-disposition");

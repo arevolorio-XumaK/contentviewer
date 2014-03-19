@@ -12,19 +12,19 @@
         <title>Add to Jack's Rabbit Repository</title>
     </head>
     <body>
-        <h1>ContentViewer!</h1>
+    <center><h1>ContentViewer!</h1>
         <table>
             <tr>
                 <td><a href="Viewer">Viewer</a></td>
                 <td><a href="upload.jsp">Upload</a></td>
             </tr>
-        </table>
+        </table></center>
         <h3>File loader:</h3>
-        write a message: <br />
+        Please select a file: <br />
         <form action="LoadServlet" method="POST" enctype="multipart/form-data">
-            Message Name: <input type="text" name="msg">
             File : <input type="file" name="file">
                    <input type="submit" value="upload" />
         </form>
+    
     </body>
 </html>

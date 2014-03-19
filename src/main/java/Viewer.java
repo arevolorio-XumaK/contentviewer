@@ -57,23 +57,27 @@ public class Viewer extends HttpServlet {
             out.println("<title>Servlet Viewer</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Image Viewer</h1>"
+            out.println("<center><h1>Image Viewer</h1>"
                     + "  <table>\n" +
 "                           <tr>\n" +
 "                               <td><a href=\"www.google.com.gt\">Viewer</a></td>\n" +
 "                               <td><a href=\"upload.jsp\">Upload</a></td>\n" +
 "                           </tr>"
-                      + "</table>");
-            out.println("<form action=\"ImageLouderServlet\" method =\"GET\" >");
+                      + "</table></center>");
+            out.println("<center><form action=\"ImageLouderServlet\" method =\"GET\" >");
+            out.println("</br><p>Select an Image:</>");
             out.println("<select name=\"id\"onchange=\"this.form.submit()\">");
             while(img_iterator.hasNext()){
                 Property tmp = img_iterator.nextProperty();
                 String filename = tmp.getName();
-                out.println("<option value=\""+filename+"\">"+filename+"</option>");
+                if(!(filename.equals("jcr:primaryType")))
+                  {
+                    out.println("<option value=\""+filename+"\">"+filename+"</option>");
+                  }
             }
             //out.println("<option value name=\"id\"></option>");
             out.println("</select>");
-            out.println("</form>");
+            out.println("</form></center>");
             out.println("</body>");
             out.println("</html>");
         } finally {
