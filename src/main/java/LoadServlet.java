@@ -54,6 +54,7 @@ public class LoadServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, RepositoryException, NamingException {
         response.setContentType("text/html");
+        
         //JackRabbit Log in 
         Repository repository;
         repository = JcrUtils.getRepository("http://localhost:8080/rmi");
@@ -73,78 +74,100 @@ public class LoadServlet extends HttpServlet {
         PrintWriter printer = response.getWriter();
         InputStream in = null;
         OutputStream out = null;
-        //verificacion de paramentros de entrada
-      
-          
-            
-        //
+        
       try{
-          
+          Boolean error = false;
           in = filePart.getInputStream();
-          Node root = jcrSession.getRootNode();    
-          addFileToRepo(jcrSession,in,request);// @see method addFileToRepo(Session jcr,InputStream in,HttpServletRequest request)
-          jcrSession.save();
-          Node node = root.getNode("Message");
-          PropertyIterator piterator =node.getProperties();
-          Node imageNode = root.getNode("Images");
-          PropertyIterator img_iterator =imageNode.getProperties();
-          Node DocsNode = root.getNode("Docs");
-          PropertyIterator docs_iterator =DocsNode.getProperties();
-          String title = "Uploading to JackRabbit Repo";
-          String docType =
-            "<!doctype html public \"-//w3c//dtd html 4.0 " +
-            "transitional//en\">\n";
-            printer.println(docType +
+          Node root = jcrSession.getRootNode();   
+          System.out.println(">>>>>>>>>>>>>>uploaded file name: "+fileName+" Part to String: "+filePart.toString());
+         // verificacion del output --- activa Error: No File selected
+          if (!(fileName.equals(""))){
+            addFileToRepo(jcrSession,in,request);// @see method addFileToRepo(Session jcr,InputStream in,HttpServletRequest request)
+            jcrSession.save();
+            error= false;
+          }else{
+              error=true;
+          }
+          
+          if(error.equals(false))
+          {    
+            Node node = root.getNode("Message");
+            PropertyIterator piterator =node.getProperties();
+            Node imageNode = root.getNode("Images");
+            PropertyIterator img_iterator =imageNode.getProperties();
+            Node DocsNode = root.getNode("Docs");
+             PropertyIterator docs_iterator =DocsNode.getProperties();
+            String title = "Uploading to JackRabbit Repo";
+            String docType =
+             "<!doctype html public \"-//w3c//dtd html 4.0 " +
+             "transitional//en\">\n";
+             printer.println(docType +
                 "<html>\n" +
-                "<head><title>" + title + "</title></head>\n" +
-                "<body bgcolor=\"#f0f0f0\">\n" +
-                "<h1 align=\"center\">" + title + "</h1>\n" +
-                "<ul>\n" +
-                " <li><b>thoose are the strings saved on jack Rabbit Repository</b>:</li> ");
-                while(piterator.hasNext())
-                {
-                  Property tmp = piterator.nextProperty();
-                  fromRepo = tmp.getString();
-                  if(!(fromRepo.equals("nt:unstructured")))
-                  {    
-                      printer.println("<li>"+fromRepo+"</li>");
-                  }
-                }
+                  "<head><title>" + title + "</title></head>\n" +
+                    "<body bgcolor=\"#f0f0f0\">\n" +
+                         "<h1 align=\"center\">" + title + "</h1>\n" +
+                         "<ul>\n" +
+                        " <li><b>thoose are the strings saved on jack Rabbit Repository</b>:</li> ");
+                        while(piterator.hasNext())
+                        {
+                            Property tmp = piterator.nextProperty();
+                            fromRepo = tmp.getString();
+                            if(!(fromRepo.equals("nt:unstructured")))
+                            {    
+                                printer.println("<li>"+fromRepo+"</li>");
+                             }
+                        }
                  
-               printer.println("</ul>\n" +
-                "<ul>\n" +
-                " <li><b>thoose are the images saved on jack Rabbit Repository</b>:</li> ");
-                while(img_iterator.hasNext())
-                {
-                  Property tmp = img_iterator.nextProperty();
-                  String filename = tmp.getName();
-                  String pathJR;
-                  pathJR = tmp.getPath();
-                  InputStream imagen = tmp.getStream();
-                  String spath = path+"/new"+filename;
-                  System.out.println("*******************"+pathJR+"****************"+spath);
-                  if(!(filename.equals("jcr:primaryType")))
-                  {    
-                      printer.println("<li><a  href=\"ImageLouderServlet?id="+filename+"\" > "+filename+"</a></li>");
+                        printer.println("</ul>\n" +
+                        "<ul>\n" +
+                        " <li><b>thoose are the images saved on jack Rabbit Repository</b>:</li> ");
+                        while(img_iterator.hasNext())
+                        {
+                            Property tmp = img_iterator.nextProperty();
+                            String filename = tmp.getName();
+                            String pathJR;
+                            pathJR = tmp.getPath();
+                            InputStream imagen = tmp.getStream();
+                            String spath = path+"/new"+filename;
+                            //System.out.println("*******************"+pathJR+"****************"+spath);
+                           if(!(filename.equals("jcr:primaryType")))
+                             {    
+                                printer.println("<li><a  href=\"ImageLouderServlet?id="+filename+"\" > "+filename+"</a></li>");
                        
-                  }
-                }
+                             }
+                        }
                  
-               printer.println("</ul>\n"+
-                "<ul>\n" +
-                " <li><b>thoose are the Documents saved on jack Rabbit Repository</b>:</li> ");
-                while(docs_iterator.hasNext())
-                {
-                  Property tmp = docs_iterator.nextProperty();
-                  String filename = tmp.getName();
-                  if(!(filename.equals("jcr:primaryType")))
-                  {    
-                      printer.println("<li>"+filename+"</li>");
-                  }
-                }
+                        printer.println("</ul>\n"+
+                        "<ul>\n" +
+                        " <li><b>thoose are the Documents saved on jack Rabbit Repository</b>:</li> ");
+                        while(docs_iterator.hasNext())
+                         {
+                            Property tmp = docs_iterator.nextProperty();
+                            String filename = tmp.getName();
+                            if(!(filename.equals("jcr:primaryType")))
+                            {    
+                                printer.println("<li>"+filename+"</li>");
+                            }
+                        }
                  
-                printer.println("</ul>\n"+
-                "</body></html>");
+                        printer.println("</ul>\n"+
+                        "</body></html>");
+          }else{
+              if(error.equals(true))
+              {
+                    printer.println("<!DOCTYPE html>");
+                    printer.println("<html>");
+                    printer.println("<head>");
+                    printer.println("<title>Servlet Viewer</title>");            
+                    printer.println("</head>");
+                    printer.println("<body>");
+                    printer.println("<center><h2>Error: No file selected</h2></center>");
+                    printer.println("<p>You didn't select a file to upload to jackrabbit repository, please go back and select a file to upload</p>");
+                    printer.println("</body>");
+                    printer.println("</html>");
+                    
+              }
+          }
          
       }finally{
           jcrSession.logout();

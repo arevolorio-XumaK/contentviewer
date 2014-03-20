@@ -126,6 +126,7 @@ public class Viewer extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            
             processRequest(request, response);
         } catch (RepositoryException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
