@@ -74,7 +74,7 @@ public class Viewer extends HttpServlet {
 "                               <td><a href=\"upload.jsp\">Upload</a></td>\n" +
 "                           </tr>"
                       + "</table></center>");
-            out.println("<center><form action=\"ImageLouderServlet\" method =\"GET\" >");
+            out.println("<center><form action=\"Viewer\" method =\"POST\" >");
             out.println("</br><p>Select an Image:</>");
             out.println("<select name=\"id\"onchange=\"this.form.submit()\">");
             while(img_iterator.hasNext()){
@@ -88,6 +88,9 @@ public class Viewer extends HttpServlet {
             
             out.println("</select>");
             out.println("</form></center>");
+            if(!(request.getParameter("id").toString().equals(""))){
+                out.println("<center><img src=\"ImageLouderServlet?id="+request.getParameter("id")+"\"></center>");
+            }
             out.println("</body>");
             out.println("</html>");
         } finally {
