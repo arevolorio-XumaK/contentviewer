@@ -3,18 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+/**
+ *
+ * @author xumakgt6 (Allan Revolorio)
+ * @version alfa4
+ */
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-/**
- *
- * @author xumakgt6
- */
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -83,7 +82,7 @@ public class LoadServlet extends HttpServlet {
           
           in = filePart.getInputStream();
           Node root = jcrSession.getRootNode();    
-          addFileToRepo(jcrSession,in,request);// metodo que agrega archivo al los distintos tipos nodo
+          addFileToRepo(jcrSession,in,request);// @see method addFileToRepo(Session jcr,InputStream in,HttpServletRequest request)
           jcrSession.save();
           Node node = root.getNode("Message");
           PropertyIterator piterator =node.getProperties();
@@ -111,8 +110,7 @@ public class LoadServlet extends HttpServlet {
                       printer.println("<li>"+fromRepo+"</li>");
                   }
                 }
-                 /*request.getParameter("msg") + "\n" +
-                " <li><b>Message from the repo</b>:" + fromRepo*/
+                 
                printer.println("</ul>\n" +
                 "<ul>\n" +
                 " <li><b>thoose are the images saved on jack Rabbit Repository</b>:</li> ");
@@ -131,8 +129,7 @@ public class LoadServlet extends HttpServlet {
                        
                   }
                 }
-                 /*request.getParameter("msg") + "\n" +
-                " <li><b>Message from the repo</b>:" + fromRepo*/
+                 
                printer.println("</ul>\n"+
                 "<ul>\n" +
                 " <li><b>thoose are the Documents saved on jack Rabbit Repository</b>:</li> ");
@@ -145,16 +142,9 @@ public class LoadServlet extends HttpServlet {
                       printer.println("<li>"+filename+"</li>");
                   }
                 }
-                 /*request.getParameter("msg") + "\n" +
-                " <li><b>Message from the repo</b>:" + fromRepo*/
+                 
                 printer.println("</ul>\n"+
                 "</body></html>");
-               
-          
-          /*Node imgNode;
-          imgNode = root.getNode("Images");
-          imgNode.setProperty(fileName, in);
-          jcrSession.save();*/
          
       }finally{
           jcrSession.logout();
@@ -171,7 +161,12 @@ public class LoadServlet extends HttpServlet {
       
       
     }
-    private String getFileName(final Part part) {
+    /*creado por @autor xumakgt6 (Allan Revolorio)
+    *el metodo getFileName(Part part) devuelve un string con el nombre del archivo 
+    * @param part es un Objecto file del cual obtendremos el String.
+    * @return un substring con el nombre del archivo + la extension del archivo
+    */
+    private String getFileName(Part part) {
     final String partHeader = part.getHeader("content-disposition");
     LOGGER.log(Level.INFO, "Part Header = {0}", partHeader);
          for (String content : part.getHeader("content-disposition").split(";")) {
@@ -182,11 +177,18 @@ public class LoadServlet extends HttpServlet {
         }
         return null;
     }
+     /*creado por @autor xumakgt6 (Allan Revolorio)
+    *el metodo addFileToRepo(Session jcrSession, InputStream in, HttpServletRequest request) se encarga de agregar el archivo leido en el InputStream 
+    *y Guardarlo en un nuevo property en el nodo que le corresponde segun su tipo de archivo.
+    * @param Session jcrSession es la sesion iniciada al servidor de jackrabbit-standalone (Donde esta el repositorio remoto).
+    * @param InputStream in es el binario del archivo.
+    * @param HttpServletRequest request es el request que se le hizo a este servlet, desde este se optiene el file name 
+    */
     public void addFileToRepo(Session jcrSession, InputStream in, HttpServletRequest request) throws RepositoryException, IOException, ServletException// este metodo agrega archivos al repositorio dependiendo de que tipo de archivo sea 
     {
           Node root = jcrSession.getRootNode();
           Part filePart = request.getPart("file");
-          final String fileName = getFileName(filePart);
+          final String fileName = getFileName(filePart);//* @see getFileName(Part part)
           int point = fileName.lastIndexOf(".");
           String ext = fileName.substring(point, fileName.length());
           Node fileNode = null;
@@ -203,9 +205,15 @@ public class LoadServlet extends HttpServlet {
               }
           }
          //Node imgNode = root.getNode("Images");
-         System.out.println(">>>>name of the file: "+fileName+" and the extension is "+ext);
+         //System.out.println(">>>>name of the file: "+fileName+" and the extension is "+ext);
          
     }
+      /*creado por @autor xumakgt6 (Allan Revolorio)
+    *el metodo addFileToRepo(Session jcrSession, String msg) se encarga de agregar un string al nodo "Messages" en repositorio remoto remoto de jackrabbit 
+    *y Guardarlo en un nuevo property en el nodo que le corresponde segun su tipo de archivo.
+    * @param Session jcrSession es la sesion iniciada al servidor de jackrabbit-standalone (Donde esta el repositorio remoto).
+    * @param String msg es el string que se desea agregar al repositorio remoto de jackrabbit
+    */
     public void addMessageToRepo(Session jcrSession, String msg) throws RepositoryException// este metodo agrega Messages(strings) al repositorio de jackrabbit
     {
         Node root = jcrSession.getRootNode();
@@ -214,6 +222,10 @@ public class LoadServlet extends HttpServlet {
         jcrSession.save();
         
     }
+    /*creado por @autor xumakgt6 (Allan Revolorio)
+    *el metodo getMessagesFromRepo(Session jcrSession) obtiene un lista encadenada con cada property del nodo Messages del repositorio de jackrabbit.
+    * @param Session jcrSession es la sesion iniciada al servidor de jackrabbit-standalone (Donde esta el repositorio remoto).
+    */
     public LinkedList<Node> getMessagesFromRepo(Session jcrSession) throws RepositoryException// este metodo obtienen una lista de nodos del nodo message del repositorio de jackrabbit 
     {
         LinkedList<Node> msg = new LinkedList<Node>();

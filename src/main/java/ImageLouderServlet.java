@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+/**
+ *
+ * @author xumakgt6 (Allan Revolorio)
+ */
 import com.liferay.portal.util.PortalUtil;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -26,10 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.jackrabbit.commons.JcrUtils;
 
-/**
- *
- * @author xumakgt6
- */
 @WebServlet(urlPatterns = {"/ImageLouderServlet"})
 public class ImageLouderServlet extends HttpServlet {
 

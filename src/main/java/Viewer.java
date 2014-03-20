@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+/**
+ *
+ * @author xumakgt6 (Allan Revolorio)
+ */
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -21,10 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.jackrabbit.commons.JcrUtils;
 
-/**
- *
- * @author xumakgt6
- */
+    /*
+    * Viewer es el servlet encargado seleccionar una imagen del repositorio de jackrabbit utilizando un select para poder 
+    * desplegado en el browser.
+    * @version Alfa4 20/3/2014
+    */
 public class Viewer extends HttpServlet {
 
     /**
@@ -36,6 +40,12 @@ public class Viewer extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    /*creado por @autor xumakgt6 (Allan Revolorio) 
+    *processRequest(HttpServletRequest request, HttpServletResponse response) genera un html con un select con todos las imagenes almacenada en el 
+    * repositorio remoto de jackrabbit.
+    * @param request, es el HttpServletRequest obtenido de la llamada al servlet
+    * @param response, es el HttpServletResponse que al cual responde la llamada al servlet
+    */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, RepositoryException {
         response.setContentType("text/html;charset=UTF-8");
@@ -60,7 +70,7 @@ public class Viewer extends HttpServlet {
             out.println("<center><h1>Image Viewer</h1>"
                     + "  <table>\n" +
 "                           <tr>\n" +
-"                               <td><a href=\"www.google.com.gt\">Viewer</a></td>\n" +
+"                               <td><a href=\"Viewer\">Viewer</a></td>\n" +
 "                               <td><a href=\"upload.jsp\">Upload</a></td>\n" +
 "                           </tr>"
                       + "</table></center>");
@@ -75,7 +85,7 @@ public class Viewer extends HttpServlet {
                     out.println("<option value=\""+filename+"\">"+filename+"</option>");
                   }
             }
-            //out.println("<option value name=\"id\"></option>");
+            
             out.println("</select>");
             out.println("</form></center>");
             out.println("</body>");

@@ -1,7 +1,7 @@
 <%-- 
     Document   : upload
     Created on : Mar 19, 2014, 7:33:17 AM
-    Author     : xumakgt6
+    Author     : xumakgt6 (Allan Revolorio)
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
