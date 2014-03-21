@@ -78,6 +78,7 @@ public class Viewer extends HttpServlet {
                 out.println("<center><form action=\"Viewer\" method =\"POST\" >");
                 out.println("</br><p>Select an Image:</>");
                 out.println("<select name=\"id\"onchange=\"this.form.submit()\">");
+                out.println("<option value=\"\">select an image</option>");
                 while(img_iterator.hasNext()){
                     Property tmp = img_iterator.nextProperty();
                     String filename = tmp.getName();
