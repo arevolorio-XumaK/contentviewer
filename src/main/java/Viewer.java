@@ -48,53 +48,55 @@ public class Viewer extends HttpServlet {
     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, RepositoryException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        Repository repository;
-        repository = JcrUtils.getRepository("http://localhost:8080/rmi");
-        SimpleCredentials creds = new SimpleCredentials("admin",
-            "admin".toCharArray());
-        Session jcrSession = repository.login(creds, "default");
-        Node root = jcrSession.getRootNode();
-        Node imageNode = root.getNode("Images");
-          PropertyIterator img_iterator =imageNode.getProperties();
-        System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
-        try {
+         if(!(request == null||(response == null))){
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            Repository repository;
+            repository = JcrUtils.getRepository("http://localhost:8080/rmi");
+            SimpleCredentials creds = new SimpleCredentials("admin",
+                                                            "admin".toCharArray());
+            Session jcrSession = repository.login(creds, "default");
+            Node root = jcrSession.getRootNode();
+            Node imageNode = root.getNode("Images");
+            PropertyIterator img_iterator =imageNode.getProperties();
+            System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
+            try {
             
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Viewer</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<center><h1>Image Viewer</h1>"
-                    + "  <table>\n" +
-"                           <tr>\n" +
-"                               <td><a href=\"Viewer\">Viewer</a></td>\n" +
-"                               <td><a href=\"upload.jsp\">Upload</a></td>\n" +
-"                           </tr>"
-                      + "</table></center>");
-            out.println("<center><form action=\"Viewer\" method =\"POST\" >");
-            out.println("</br><p>Select an Image:</>");
-            out.println("<select name=\"id\"onchange=\"this.form.submit()\">");
-            while(img_iterator.hasNext()){
-                Property tmp = img_iterator.nextProperty();
-                String filename = tmp.getName();
-                if(!(filename.equals("jcr:primaryType")))
-                  {
-                    out.println("<option value=\""+filename+"\">"+filename+"</option>");
-                  }
-            }
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Servlet Viewer</title>");            
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<center><h1>Image Viewer</h1>"
+                             + "  <table>\n" +
+"                                   <tr>\n" +
+"                                       <td><a href=\"Viewer\">Viewer</a></td>\n" +
+"                                       <td><a href=\"upload.jsp\">Upload</a></td>\n" +
+"                                   </tr>"
+                               + "</table></center>");
+                out.println("<center><form action=\"Viewer\" method =\"POST\" >");
+                out.println("</br><p>Select an Image:</>");
+                out.println("<select name=\"id\"onchange=\"this.form.submit()\">");
+                while(img_iterator.hasNext()){
+                    Property tmp = img_iterator.nextProperty();
+                    String filename = tmp.getName();
+                    if(!(filename.equals("jcr:primaryType")))
+                    {
+                        out.println("<option value=\""+filename+"\">"+filename+"</option>");
+                    }
+                }
             
-            out.println("</select>");
-            out.println("</form></center>");
-            if(!(request.getParameter("id").toString().equals(""))){
-                out.println("<center><img src=\"ImageLouderServlet?id="+request.getParameter("id")+"\"></center>");
+                out.println("</select>");
+                out.println("</form></br></br></center>");
+                if(!(request.getParameter("id").toString().equals(""))){ // si el id es "" quiere decir que es la primera vez que se invoca a la pagina 
+                    out.println("<center><img src=\"ImageLouderServlet?id="+request.getParameter("id")+"\" width=\"40%\" height=\"40%\"></center>");
+                }
+                out.println("</body>");
+                out.println("</html>");
+            } finally {
+                out.close();
             }
-            out.println("</body>");
-            out.println("</html>");
-        } finally {
-            out.close();
         }
     }
 
@@ -111,7 +113,9 @@ public class Viewer extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            processRequest(request, response);
+             if(!(request == null||(response == null))){
+                processRequest(request, response);
+            }
         } catch (RepositoryException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -129,8 +133,9 @@ public class Viewer extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            
-            processRequest(request, response);
+            if(!(request == null||(response == null))){
+                processRequest(request, response);
+            }
         } catch (RepositoryException ex) {
             Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -143,7 +148,7 @@ public class Viewer extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "This ServletClass is display the selected image from the select";
     }// </editor-fold>
 
 }

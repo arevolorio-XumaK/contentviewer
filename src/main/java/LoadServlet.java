@@ -40,7 +40,14 @@ import org.apache.jackrabbit.commons.JcrUtils;
 public class LoadServlet extends HttpServlet {
         private final static Logger LOGGER = 
             Logger.getLogger(LoadServlet.class.getCanonicalName());
-    /**
+
+        Repository repository; 
+        SimpleCredentials creds;
+        Session jcrSession;
+     public LoadServlet() throws ServletException, RepositoryException{
+            initJR();
+        }
+/**
 * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
 * methods.
 *
@@ -50,61 +57,54 @@ public class LoadServlet extends HttpServlet {
 * @throws IOException if an I/O error occurs
 * @throws javax.jcr.RepositoryException
 * @throws javax.naming.NamingException
-*/
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, RepositoryException, NamingException {
-        response.setContentType("text/html");
-        
-        //JackRabbit Log in 
-        Repository repository;
-        repository = JcrUtils.getRepository("http://localhost:8080/rmi");
-        SimpleCredentials creds = new SimpleCredentials("admin",
-            "admin".toCharArray());
-        Session jcrSession = repository.login(creds, "default");
-        System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
-        //messages a desplegar
-       
-        String fromRepo = "CDP";
+*/             
+        protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException, RepositoryException, NamingException {
+        if(!((request == null)||(response == null))){
+            response.setContentType("text/html");
+            this.jcrSession = repository.login(creds, "default");
+            System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
+            //messages a desplegar 
+            String fromRepo = "CDP";
+            // Create path components to save the file
+            final String path = "/home/xumakgt6/jackrabbit-2.6.5/jackrabbit-standalone/target/jackrabbit/images";
+            final Part filePart = request.getPart("file");
+            final String fileName = getFileName(filePart);
         //
-         // Create path components to save the file
-          final String path = "/home/xumakgt6/jackrabbit-2.6.5/jackrabbit-standalone/target/jackrabbit/images";
-          final Part filePart = request.getPart("file");
-          final String fileName = getFileName(filePart);
-        //
-        PrintWriter printer = response.getWriter();
-        InputStream in = null;
-        OutputStream out = null;
+            PrintWriter printer = response.getWriter();
+            InputStream in = null;
+            OutputStream out = null;
         
-      try{
-          Boolean error = false;
-          in = filePart.getInputStream();
-          Node root = jcrSession.getRootNode();   
-          System.out.println(">>>>>>>>>>>>>>uploaded file name: "+fileName+" Part to String: "+filePart.toString());
-         // verificacion del output --- activa Error: No File selected
-          if (!(fileName.equals(""))){
-            addFileToRepo(jcrSession,in,request);// @see method addFileToRepo(Session jcr,InputStream in,HttpServletRequest request)
-            jcrSession.save();
-            error= false;
-          }else{
-              error=true;
-          }
+            try{
+               Boolean error = false;
+               in = filePart.getInputStream();
+               Node root = jcrSession.getRootNode();   
+               System.out.println(">>>>>>>>>>>>>>uploaded file name: "+fileName+" Part to String: "+filePart.toString());
+                // verificacion del output --- activa Error: No File selected
+               if (!(fileName.equals(""))){
+                    addFileToRepo(in,request);// @see method addFileToRepo(Session jcr,InputStream in,HttpServletRequest request)
+                    jcrSession.save();
+                    error= false;
+                }else{
+                    error=true;
+                }
           
-          if(error.equals(false))
-          {    
-            Node node = root.getNode("Message");
-            PropertyIterator piterator =node.getProperties();
-            Node imageNode = root.getNode("Images");
-            PropertyIterator img_iterator =imageNode.getProperties();
-            Node DocsNode = root.getNode("Docs");
-             PropertyIterator docs_iterator =DocsNode.getProperties();
-            String title = "Uploading to JackRabbit Repo";
-            String docType =
-             "<!doctype html public \"-//w3c//dtd html 4.0 " +
-             "transitional//en\">\n";
-             printer.println(docType +
-                "<html>\n" +
-                  "<head><title>" + title + "</title></head>\n" +
-                    "<body bgcolor=\"#f0f0f0\">\n" +
+                if(error.equals(false))
+                {    
+                        Node node = root.getNode("Message");
+                        PropertyIterator piterator =node.getProperties();
+                        Node imageNode = root.getNode("Images");
+                        PropertyIterator img_iterator =imageNode.getProperties();
+                        Node DocsNode = root.getNode("Docs");
+                        PropertyIterator docs_iterator =DocsNode.getProperties();
+                        String title = "Uploading to JackRabbit Repo";
+                        String docType =
+                        "<!doctype html public \"-//w3c//dtd html 4.0 " +
+                        "transitional//en\">\n";
+                        printer.println(docType +
+                        "<html>\n" +
+                        "<head><title>" + title + "</title></head>\n" +
+                        "<body bgcolor=\"#f0f0f0\">\n" +
                          "<h1 align=\"center\">" + title + "</h1>\n" +
                          "<ul>\n" +
                         " <li><b>thoose are the strings saved on jack Rabbit Repository</b>:</li> ");
@@ -152,25 +152,25 @@ public class LoadServlet extends HttpServlet {
                  
                         printer.println("</ul>\n"+
                         "</body></html>");
-          }else{
-              if(error.equals(true))
-              {
-                    printer.println("<!DOCTYPE html>");
-                    printer.println("<html>");
-                    printer.println("<head>");
-                    printer.println("<title>Servlet Viewer</title>");            
-                    printer.println("</head>");
-                    printer.println("<body>");
-                    printer.println("<center><h2>Error: No file selected</h2></center>");
-                    printer.println("<p>You didn't select a file to upload to jackrabbit repository, please go back and select a file to upload</p>");
-                    printer.println("</body>");
-                    printer.println("</html>");
+                      }else{
+                        if(error.equals(true))
+                        {
+                            printer.println("<!DOCTYPE html>");
+                            printer.println("<html>");
+                            printer.println("<head>");
+                            printer.println("<title>Servlet Viewer</title>");            
+                            printer.println("</head>");
+                            printer.println("<body>");
+                            printer.println("<center><h2>Error: No file selected</h2></center>");
+                            printer.println("<p>You didn't select a file to upload to jackrabbit repository, please go back and select a file to upload</p>");
+                            printer.println("</body>");
+                            printer.println("</html>");
                     
-              }
-          }
+                        }
+                    }
          
-      }finally{
-          jcrSession.logout();
+                }finally{
+          this.jcrSession.logout();
           if (out != null) {
             out.close();
         }
@@ -182,9 +182,10 @@ public class LoadServlet extends HttpServlet {
         }
       }
       
-      
+        }
     }
-    /*creado por @autor xumakgt6 (Allan Revolorio)
+    /**
+    * creado por @autor xumakgt6 (Allan Revolorio)
     *el metodo getFileName(Part part) devuelve un string con el nombre del archivo 
     * @param part es un Objecto file del cual obtendremos el String.
     * @return un substring con el nombre del archivo + la extension del archivo
@@ -200,21 +201,28 @@ public class LoadServlet extends HttpServlet {
         }
         return null;
     }
-     /*creado por @autor xumakgt6 (Allan Revolorio)
+     /**
+    * creado por @autor xumakgt6 (Allan Revolorio)
     *el metodo addFileToRepo(Session jcrSession, InputStream in, HttpServletRequest request) se encarga de agregar el archivo leido en el InputStream 
-    *y Guardarlo en un nuevo property en el nodo que le corresponde segun su tipo de archivo.
-    * @param Session jcrSession es la sesion iniciada al servidor de jackrabbit-standalone (Donde esta el repositorio remoto).
-    * @param InputStream in es el binario del archivo.
-    * @param HttpServletRequest request es el request que se le hizo a este servlet, desde este se optiene el file name 
+    *y guardarlo en un nuevo property en el nodo que le corresponde segun su tipo de archivo.
+    * @param in  es el binario del archivo.
+    * @param request request es el request que se le hizo a este servlet, desde este se optiene el file name 
+     * @throws javax.jcr.RepositoryException 
+     * @throws java.io.IOException 
+     * @throws javax.servlet.ServletException 
     */
-    public void addFileToRepo(Session jcrSession, InputStream in, HttpServletRequest request) throws RepositoryException, IOException, ServletException// este metodo agrega archivos al repositorio dependiendo de que tipo de archivo sea 
+    public void addFileToRepo( InputStream in, HttpServletRequest request) throws RepositoryException, IOException, ServletException// este metodo agrega archivos al repositorio dependiendo de que tipo de archivo sea 
     {
-          Node root = jcrSession.getRootNode();
-          Part filePart = request.getPart("file");
-          final String fileName = getFileName(filePart);//* @see getFileName(Part part)
-          int point = fileName.lastIndexOf(".");
-          String ext = fileName.substring(point, fileName.length());
-          Node fileNode = null;
+          
+          if(!((request == null)||(in == null))){
+                this.jcrSession = repository.login(creds, "default");
+                System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
+                Node root = jcrSession.getRootNode();
+                Part filePart = request.getPart("file");
+                final String fileName = getFileName(filePart);//* @see getFileName(Part part)
+                int point = fileName.lastIndexOf(".");
+                String ext = fileName.substring(point, fileName.length());
+                Node fileNode = null;
           if((ext.equals(".jpg"))||(ext.equals(".png"))||(ext.equals(".gif"))||(ext.equals(".jpeg")))
           {
               fileNode = root.getNode("Images");
@@ -227,41 +235,43 @@ public class LoadServlet extends HttpServlet {
                   jcrSession.save();
               }
           }
-         //Node imgNode = root.getNode("Images");
-         //System.out.println(">>>>name of the file: "+fileName+" and the extension is "+ext);
+          }
+         
          
     }
       /*creado por @autor xumakgt6 (Allan Revolorio)
     *el metodo addFileToRepo(Session jcrSession, String msg) se encarga de agregar un string al nodo "Messages" en repositorio remoto remoto de jackrabbit 
     *y Guardarlo en un nuevo property en el nodo que le corresponde segun su tipo de archivo.
-    * @param Session jcrSession es la sesion iniciada al servidor de jackrabbit-standalone (Donde esta el repositorio remoto).
     * @param String msg es el string que se desea agregar al repositorio remoto de jackrabbit
     */
-    public void addMessageToRepo(Session jcrSession, String msg) throws RepositoryException// este metodo agrega Messages(strings) al repositorio de jackrabbit
+    public void addMessageToRepo(String msg) throws RepositoryException// este metodo agrega Messages(strings) al repositorio de jackrabbit
     {
-        Node root = jcrSession.getRootNode();
-        Node node = root.getNode("Message");
-        node.setProperty(msg, msg);
-        jcrSession.save();
-        
+        if(!((msg.equals("")||(msg==null)))){
+            this.jcrSession = repository.login(creds, "default");
+            Node root = jcrSession.getRootNode();
+            Node node = root.getNode("Message");
+            node.setProperty(msg, msg);
+            jcrSession.save();
+        }
     }
     /*creado por @autor xumakgt6 (Allan Revolorio)
     *el metodo getMessagesFromRepo(Session jcrSession) obtiene un lista encadenada con cada property del nodo Messages del repositorio de jackrabbit.
     * @param Session jcrSession es la sesion iniciada al servidor de jackrabbit-standalone (Donde esta el repositorio remoto).
     */
-    public LinkedList<Node> getMessagesFromRepo(Session jcrSession) throws RepositoryException// este metodo obtienen una lista de nodos del nodo message del repositorio de jackrabbit 
+    public LinkedList<Node> getMessagesFromRepo() throws RepositoryException// este metodo obtienen una lista de nodos del nodo message del repositorio de jackrabbit 
     {
-        LinkedList<Node> msg = new LinkedList<Node>();
-        Node root = jcrSession.getRootNode();
-        Node Messages = root.getNode("Message");
-        NodeIterator ni = Messages.getNodes();
-        while(ni.hasNext())
-        {
-            Node next = ni.nextNode();
-            msg.add(next);
-        }
-        
-        return msg;
+          LinkedList<Node> msg = new LinkedList<Node>();
+          this.jcrSession = repository.login(creds, "default");
+          System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
+          Node root = jcrSession.getRootNode();
+          Node Messages = root.getNode("Message");
+          NodeIterator ni = Messages.getNodes();
+          while(ni.hasNext())
+            {
+                Node next = ni.nextNode();
+                msg.add(next);
+            }
+       return msg;
     }
    
     
@@ -275,9 +285,19 @@ public class LoadServlet extends HttpServlet {
 * @throws IOException if an I/O error occurs
 */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+            try {
             
+            if(!(request == null||(response == null))){
+                initJR();
+                processRequest(request, response);
+            }
+        } catch (RepositoryException ex) {
+            Logger.getLogger(LoadServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
+            Logger.getLogger(LoadServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
 
@@ -288,12 +308,15 @@ public class LoadServlet extends HttpServlet {
 * @param response servlet response
 * @throws ServletException if a servlet-specific error occurs
 * @throws IOException if an I/O error occurs
-* @throws javax.jcr.RepositoryException
 */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         try {
-            processRequest(request, response);
+            
+            if(!(request == null||(response == null))){
+                initJR();
+                processRequest(request, response);
+            }
         } catch (RepositoryException ex) {
             Logger.getLogger(LoadServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
@@ -303,16 +326,18 @@ public class LoadServlet extends HttpServlet {
        
     }
 
-    /**
-* Returns a short description of the servlet.
-*
-* @return a String containing servlet description
-*/
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-    
 
+    /**
+     * Este metodo inicializa Jackrabbit
+     * @throws javax.jcr.RepositoryException
+     */
+    private void initJR()throws RepositoryException{
+        this.repository = JcrUtils.getRepository("http://localhost:8080/rmi");
+        this.creds = new SimpleCredentials("admin",
+            "admin".toCharArray());
+        this.jcrSession = repository.login(creds, "default");
+        System.out.println("Login successful, workspace: " + jcrSession.getWorkspace());
+    }
+    
 }
 

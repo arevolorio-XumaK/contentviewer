@@ -40,18 +40,19 @@ public class ImageLouderServlet extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws javax.jcr.RepositoryException 
      */
      
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, RepositoryException {
-        response.setContentType("image/jpeg");
+            throws ServletException, IOException, RepositoryException
+    {
+         if(!(request == null||(response == null))){
+                response.setContentType("image/jpeg");
         
-        ServletOutputStream output = null;
-        PrintWriter out = response.getWriter();
+                 ServletOutputStream output = null;
+                 PrintWriter out = response.getWriter();
         
-      if (!(request.getParameter("id").equals(null)))
-      {    
-        try {
+            try{
                 
                 Repository repository;
                 repository = JcrUtils.getRepository("http://localhost:8080/rmi");
@@ -78,11 +79,12 @@ public class ImageLouderServlet extends HttpServlet {
  
             
                 jcrSession.save();
-        } finally {
-            out.close();
+            } finally {
+                out.close();
             
+            }
         }
-      }
+         
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -98,7 +100,11 @@ public class ImageLouderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            processRequest(request, response);
+            if(!(request == null||(response == null)))
+            {    
+            
+                processRequest(request, response);
+            }
         } catch (RepositoryException ex) {
             Logger.getLogger(ImageLouderServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -116,7 +122,10 @@ public class ImageLouderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            processRequest(request, response);
+          if(!(request == null||(response == null))){
+            
+                processRequest(request, response);
+            }
         } catch (RepositoryException ex) {
             Logger.getLogger(ImageLouderServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -129,7 +138,7 @@ public class ImageLouderServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "This Servlet add an image file to a JackRabbit's Remote Repository";
     }// </editor-fold>
 
 }
